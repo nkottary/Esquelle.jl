@@ -5,6 +5,8 @@ An easy to use julia to SQL interface. Right now only MySQL backend is supported
 ### Example
 
 ```
+julia> using Esquelle, MySQL
+
 julia> @record struct Car
            name::String
            speed::Int

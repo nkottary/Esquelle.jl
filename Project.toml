@@ -4,4 +4,12 @@ authors = ["nkottary <kottarynishanth54@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+MySQL = "39abe10b-433b-5dbd-92d4-e302a9df00cd"
+
+[targets]
+test = ["Test", "MySQL"]

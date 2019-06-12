@@ -26,7 +26,7 @@ function whereclause_operators(e::Expr)
         elseif e.args[1] == :(in)
             return " IN "
         else
-            error("Unknown symbol $(e.args[1])")
+            error("Invalid where clause operator $(e.args[1])")
         end
     elseif e.head == :(&&)
         return " AND "
@@ -62,28 +62,18 @@ function whereclause(fields::Record, e::Expr)
             error("LHS can be an attribute name only")
         end
 
-        #lhs = sprint(Base.show_unquoted, e.args[2])
         lhs = e.args[2]
 
         if !haskey(fields.metadata, lhs)
             error("LHS attribute `$lhs` not found in struct")
         end
 
-        isstring = fields.metadata[e.args[2]] == :String
-
-        if isstring && !(e.args[1] in [:(in), :(==), :(!=)])
-            error("Operator $(e.args[1]) does not work for strings")
-        end
-
-        op = whereclause_operators(e)
-
         if e.args[3] == :NULL
             op = e.args[1] == :(==) ? " IS " : " IS NOT "
             rhs = "NULL"
-        elseif isstring && !(isdefined(e.args[3], :head) && e.args[3].head == :tuple)
-            rhs = :("'" * replace(string($(e.args[3])), "'" => "\\\'") * "'")
         else
-            rhs = e.args[3]
+            op = whereclause_operators(e)
+            rhs = quotestring(fields.metadata[e.args[2]], e.args[3], e.args[1])
         end
 
         stmt = "`$lhs`$op"

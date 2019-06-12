@@ -19,49 +19,15 @@ function select_sql(T::Union{Symbol, Expr})
     "SELECT $(join(fields, ", ")) FROM `$(type_repr(T))`"
 end
 
-"""
-Convert julia expressions to SQL `SELECT` query.
-
-Examples:
-
-```
-julia> @record struct Car
-           name::String
-           speed::Int
-           weight::Float64
-           color::String
-       end
-
-julia> @select Car
-"SELECT `name`, `speed`, `weight`, `color` FROM `Car`"
-
-julia> @select Car(speed, name)
-"SELECT `speed`, `name` FROM `Car`"
-
-julia> @select(Car(speed, name), speed > 50 && weight > 100, speed => ASC)
-"SELECT `speed`, `name` FROM `Car` WHERE `speed` > 50 AND `weight` > 100 ORDER BY `speed` ASC"
-
-julia> @select(Car(speed, name), speed > 50 && weight != NULL, speed => DESC)
-"SELECT `speed`, `name` FROM `Car` WHERE `speed` > 50 AND `weight` IS NOT NULL ORDER BY `speed` ASC"
-```
-"""
-macro select(T)
-    select_sql(T)
-end
-
 function select_sql(T::Union{Symbol, Expr}, e::Expr)
     stmt = select_sql(T)
-    if e.head == :call && e.args[1] == :(=>)
+    if ispair(e)
         :($stmt * $(orderbyclause(T, e)))
     else
         fields = get_all_fields(T)
         stmt = stmt * " WHERE "
         :($stmt * $(whereclause(fields, e)))
     end
-end
-
-macro select(T, e)
-    esc(select_sql(T, e))
 end
 
 """
@@ -79,7 +45,7 @@ function orderbyclause(T, o...)
     fields = get_all_fieldnames(T)
     ob = []
     for pair in o
-        if pair.head != :call || pair.args[1] != :(=>)
+        if !ispair(pair)
             error("ORDER BY parameter must be a `Pair`")
         end
 
@@ -99,7 +65,7 @@ function orderbyclause(T, o...)
 end
 
 function select_sql(T::Union{Symbol, Expr}, e::Expr, o...)
-    if e.head == :call && e.args[1] == :(=>)
+    if ispair(e)
         obc = orderbyclause(T, e, o...)
         :($(select_sql(T)) * $obc)
     else
@@ -108,8 +74,8 @@ function select_sql(T::Union{Symbol, Expr}, e::Expr, o...)
     end
 end
 
-macro select(T, e, o...)
-    esc(select_sql(T, e, o...))
+macro select_sql(T, args...)
+    esc(select_sql(T, args...))
 end
 
 """
@@ -165,7 +131,7 @@ julia> @query Car color != NULL
  Car("Ford", 120, 500, "gold")
 ```
 """
-macro query(T, args...)
+macro select(T, args...)
     q = select_sql(T, args...)
     fs = get_all_fieldnames(T)
     rfs = get_requested_fieldnames(T)
@@ -176,6 +142,6 @@ macro query(T, args...)
 
     quote
         res = $(esc(QUERY_FUNC))($(esc(q)))
-        [$(esc(struct_name))($(params...)) for i=1:length(res[$afield])]
+        [$(esc(struct_name))($(params...)) for i=1:$(esc(length))(res[$afield])]
     end
 end

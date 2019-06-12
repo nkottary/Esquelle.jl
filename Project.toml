@@ -1,0 +1,7 @@
+name = "Esquelle"
+uuid = "e20689c4-8c1c-11e9-07d6-7bc0b68dd128"
+authors = ["nkottary <kottarynishanth54@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"

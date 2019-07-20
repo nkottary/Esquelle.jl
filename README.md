@@ -68,9 +68,7 @@ julia> @query Car
 
 ## TODO
 - Docs
-- Tests
-- Auto increment awareness
-- Unique keys awareness
-- Update, Upsert and Delete statements
+- More tests
+- Upsert statements
 - Tutorial
 - Support PostgreSQL, SQLite, ODBC, JDBC

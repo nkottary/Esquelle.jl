@@ -15,8 +15,8 @@ Returns:
 A SQL `SELECT` query `String`
 """
 function select_sql(T::Union{Symbol, Expr})
-    fields = ["`" * string(e) * "`" for e in get_requested_fieldnames(T)]
-    "SELECT $(join(fields, ", ")) FROM `$(type_repr(T))`"
+    fields = [string(e) for e in get_requested_fieldnames(T)]
+    "SELECT $(join(fields, ", ")) FROM $(type_repr(T))"
 end
 
 function select_sql(T::Union{Symbol, Expr}, e::Expr)
@@ -59,7 +59,7 @@ function orderbyclause(T, o...)
             error("ORDER BY value must be either `ASC` or `DESC`")
         end
 
-        push!(ob, "`$p` $v")
+        push!(ob, "$p $v")
     end
     return " ORDER BY " * join(ob, ", ")
 end

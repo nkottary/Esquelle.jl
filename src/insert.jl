@@ -2,7 +2,7 @@ function insert_sql(T::Symbol, arg::Union{Symbol, Expr})
     fields = get_all_fields(T)
     metadata = fields.metadata
     fns = filter(x -> x != fields.auto, fields.fieldnames)
-    stmt = "INSERT INTO `$(type_repr(T))` (`$(join(fns, "`, `"))`) VALUES ("
+    stmt = "INSERT INTO $(type_repr(T)) ($(join(fns, ", "))) VALUES ("
     vals = []
     for f in fns
         if f == fields.auto

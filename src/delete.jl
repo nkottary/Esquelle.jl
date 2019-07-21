@@ -18,12 +18,12 @@ function delete_sql(T::Symbol, args...)
         return join_exprs(
             " ",
             "DELETE FROM",
-            "`$(type_repr(T))`",
+            "$(type_repr(T))",
             "WHERE",
             whereclause(fs, wargs...)
         )
     else
-        return "DELETE FROM `$(type_repr(T))`"
+        return "DELETE FROM $(type_repr(T))"
     end
 end
 

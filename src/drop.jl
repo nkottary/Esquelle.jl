@@ -1,5 +1,5 @@
 function drop_sql(T::Symbol)
-    return "DROP TABLE `$T`"
+    return "DROP TABLE $T"
 end
 
 macro drop_sql(T)

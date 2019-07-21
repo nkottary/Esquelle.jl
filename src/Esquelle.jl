@@ -19,6 +19,7 @@ const FIELDS_DICT = Dict{Symbol, Record}()
 CONN = nothing
 QUERY_FUNC = nothing
 EXECUTE_FUNC = nothing
+AUTO = "INT NOT NULL AUTO_INCREMENT"
 
 include("connection.jl")
 include("record.jl")

@@ -1,5 +1,5 @@
-using LibPQ, Tables
-conn = LibPQ.Connection("host=localhost dbname=test password=lovemydb")
+using SQLite
+conn = SQLite.DB("test.sqlite")
 setconnection(conn)
 
 try
@@ -7,42 +7,10 @@ try
 catch ex
 end
 @create(Car)
-r = columntable(LibPQ.execute(conn, "select tablename from pg_catalog.pg_tables"))
-@test "car" in r.tablename
-r = columntable(execute(conn, "select column_name, data_type, character_maximum_length from INFORMATION_SCHEMA.COLUMNS where table_name = 'car'"))
-@test [r.column_name...] == String["id",
-                        "name",
-                        "company",
-                        "year",
-                        "weight",
-                        "color",
-                        "valves",
-                        "notes",
-                        "topspeed"]
-@test [r.data_type...] == String[ "integer",
- "character varying",
- "character varying",
- "timestamp without time zone",
- "numeric",
- "character varying",
- "integer",
- "text",
- "numeric",
-]
+r = columntable(SQLite.Query(conn, "select tbl_name, sql from sqlite_master where type='table'"))
+@test "Car" == r.tbl_name[1]
+@test r.sql[1] == Esquelle.@create_sql(Car)
 
-@test map(x -> ismissing(x) ? -1 : x, r.character_maximum_length) == [
-    -1,
-    255,
-    50,
-    -1,
-    -1,
-    50,
-    -1,
-    -1,
-    -1,
-]
-# TODO: Test for primary key
-#
 @insert(Car, c)
 
 r = @select(Car)
@@ -76,5 +44,5 @@ r = @select(Car)
             Car(3, "800", "Maruthi Suzuki", Date("2019-01-05"), 800.0, "", 0, "", 100.0)]
 
 @drop(Car)
-r = columntable(LibPQ.execute(conn, "select tablename from pg_catalog.pg_tables"))
+r = columntable(SQLite.Query(conn, "select tbl_name from sqlite_master where type = 'table'"))
 @test !("Car" in r.tablename)

@@ -13,7 +13,7 @@ function pairs2assign(r::Record, args...)
         end
         push!(expressions,
             quote
-                "`" * $(show_unquoted(k)) * "` = " * $(quotestring(r.metadata[k], v))
+                $(show_unquoted(k)) * " = " * $(quotestring(r.metadata[k], v))
             end)
     end
     join_exprs(", ", expressions...)
@@ -46,7 +46,7 @@ function update_sql(T::Union{Symbol, Expr}, args...)
     join_exprs(
         " ",
         "UPDATE",
-        "`$(show_unquoted(type_repr(T)))`",
+        show_unquoted(type_repr(T)),
         "SET",
         setstmt,
         "WHERE",

@@ -76,7 +76,7 @@ function whereclause(fields::Record, e::Expr)
             rhs = quotestring(fields.metadata[e.args[2]], e.args[3], e.args[1])
         end
 
-        stmt = "`$lhs`$op"
+        stmt = "$lhs$op"
         return :($stmt * string($rhs))
 
     elseif e.head == :(&&) || e.head == :(||)

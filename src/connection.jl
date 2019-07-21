@@ -14,18 +14,27 @@ setconnection(conn)
 """
 function setconnection(con::T) where T
     t = Symbol(T.name.module)
+    global connector = t
     if t == :MySQL
         qry = :(MySQL.query)
         exe = :(MySQL.execute!)
+        auto = "INT NOT NULL AUTO_INCREMENT"
     elseif t == :LibPQ
-        qry = :(LibPQ.execute)
+        qry = :((x, y) -> columntable(LibPQ.execute(x, y)))
         exe = :(LibPQ.execute)
+        auto = "SERIAL"
+    elseif t == :SQLite
+        qry = :((x, y) -> columntable(SQLite.Query(x, y)))
+        exe = :(SQLite.Query)
+        auto = "INTEGER PRIMARY KEY AUTOINCREMENT"
     elseif t == :ODBC
         qry = :(ODBC.query)
         exe = :(ODBC.execute)
+        auto = "INT NOT NULL AUTO_INCREMENT"
     elseif t == :JDBC
         qry = :(JDBC.executeQuery)
         exe = :(JDBC.executeQuery)
+        auto = "INT NOT NULL AUTO_INCREMENT"
     else
         error("Unsupported DBMS")
     end
@@ -33,5 +42,6 @@ function setconnection(con::T) where T
     global QUERY_FUNC = :(q -> $qry(Esquelle.CONN, q))
     global EXECUTE_FUNC = :(q -> $exe(Esquelle.CONN, q))
     global CONN = con
+    global AUTO = auto
     nothing
 end

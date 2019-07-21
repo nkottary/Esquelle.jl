@@ -59,6 +59,6 @@ Base.show(io::IO, s::VarChar{N}) where N = show(io, s.str)
 convert_sql_type(::Type{T}) where T <: Union{Date, DateTime, Time} = "TIMESTAMP"
 convert_sql_type(::Type{T}) where T <: AbstractString = "TEXT"
 convert_sql_type(::Type{Int}) = "INT"
-convert_sql_type(::Type{Auto}) = "INT NOT NULL AUTO_INCREMENT"
+convert_sql_type(::Type{Auto}) = AUTO
 convert_sql_type(::Type{T}) where T <: Number = "NUMERIC"
 convert_sql_type(::Type{VarChar{N}}) where N = "VARCHAR($N)"

@@ -8,10 +8,10 @@ function create_sql(T::Symbol)
     end
     fs = join_exprs(", ", fields...)
     extras = ""
-    if r.pkey !== nothing
+    if !isempty(r.pkey)
         extras *= ", PRIMARY KEY ($(join(r.pkey, ", ")))"
     end
-    if r.ukey !== nothing
+    if !isempty(r.ukey)
         extras *= ", UNIQUE ($(join(r.ukey, ", ")))"
     end
     join_exprs(" ", stmt, fs, extras * " )")

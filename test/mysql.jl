@@ -1,5 +1,5 @@
 using MySQL
-conn = MySQL.connect("0.0.0.0", "nishanth", "lovemydb"; db="Rainbow")
+conn = MySQL.connect("127.0.0.1", "root", ""; db="test")
 setconnection(conn)
 
 try
@@ -8,7 +8,7 @@ catch ex
 end
 @create(Car)
 r = MySQL.query(conn, "show tables")
-@test "Car" in r.Tables_in_Rainbow
+@test "Car" in r.Tables_in_test
 r = MySQL.query(conn, "describe Car")
 @test r.Field == String["id",
                         "name",
@@ -64,4 +64,4 @@ r = @select(Car)
 
 @drop(Car)
 r = MySQL.query(conn, "show tables")
-@test !("Car" in r.Tables_in_Rainbow)
+@test !("Car" in r.Tables_in_test)

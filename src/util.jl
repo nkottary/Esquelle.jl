@@ -51,6 +51,7 @@ Base.convert(::Type{String}, v::VarChar{N}) where N = s.str
 Base.convert(::Type{Auto}, i::Int) = Auto(i)
 Base.convert(::Type{Auto}, i::Int32) = Auto(i)
 Base.convert(::Type{Int}, a::Auto) = a.val
+Base.convert(::Type{Date}, s::String) = Date(s)
 Base.string(s::VarChar{N}) where N = s.str
 Base.string(a::Auto) = a.val
 Base.show(io::IO, a::Auto) = show(io, a.val)

@@ -44,11 +44,11 @@ import Esquelle: @select_sql, @insert_sql, @update_sql, @create_sql, @delete_sql
 @test @drop_sql(Car) == "DROP TABLE Car"
 
 @testset "MySQL" begin
-    include("mysql.jl")
+    #include("mysql.jl")
 end
 
 @testset "PostgreSQL" begin
-    include("pgsql.jl")
+    #include("pgsql.jl")
 end
 
 @testset "SQLite" begin

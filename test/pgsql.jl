@@ -1,5 +1,5 @@
 using LibPQ, Tables
-conn = LibPQ.Connection("host=localhost dbname=test password=lovemydb")
+conn = LibPQ.Connection("host=localhost dbname=test password= user=postgres")
 setconnection(conn)
 
 try

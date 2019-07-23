@@ -1,6 +1,21 @@
+language: julia
+
 services:
     - mysql
     - postgresql
+
+os:
+    - linux
+
+julia:
+    - 1.1
+
+notification:
+    email: false
+
+after_success:
+    - julia -e 'using Pkg; cd(Pkg.dir("Esquelle")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+
 before_script:
     - psql -c 'create database test;' -U postgres
     - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'

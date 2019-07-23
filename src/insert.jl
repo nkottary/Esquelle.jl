@@ -4,18 +4,19 @@ function insert_sql(T::Symbol, arg::Union{Symbol, Expr})
     fns = filter(x -> x != fields.auto, fields.fieldnames)
     stmt = "INSERT INTO $(type_repr(T)) ($(join(fns, ", "))) VALUES ("
     vals = []
+    a = gensym()
     for f in fns
         if f == fields.auto
             continue
         end
-        def = :(string(getfield($arg, $(QuoteNode(f)))))
+        def = :(string(getfield($a, $(QuoteNode(f)))))
         t = metadata[f]
         if t == :String || t == :Date || t == :DateTime || t isa Expr && t.head == :curly && t.args[1] == :VarChar
             def = :("'" * replace($def, "'" => "\\'") * "'")
         end
         push!(vals, def)
     end
-    :($stmt * join([$(vals...)], ", ") * ")")
+    :($a = $arg; $stmt * join([$(vals...)], ", ") * ")")
 end
 
 macro insert_sql(T, arg)

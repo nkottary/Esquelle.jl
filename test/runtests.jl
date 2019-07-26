@@ -52,15 +52,15 @@ end
 end
 
 @testset "SQLite" begin
-    include("sqlite.jl")
+    #include("sqlite.jl")
 end
 
-@record struct Owner
-    id::Auto
-    carid::Int
-    name::String
-
-    pkey=id
-
-    Owner(carid::Int, name::String) = new(0, carid, name)
-end
+# @record struct Owner
+#     id::Auto
+#     carid::Int
+#     name::String
+# 
+#     pkey=id
+# 
+#     Owner(carid::Int, name::String) = new(0, carid, name)
+# end

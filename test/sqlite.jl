@@ -33,7 +33,7 @@ r = columntable(SQLite.Query(conn, "select tbl_name, sql from sqlite_master wher
 
 @insert(Vehicle, v)
 
-@test c.id == 1
+@test c.id.val == 1
 
 r = @select(Vehicle)
 @test r[1] == Vehicle(1, "Octavia", "Skoda", Date("2019-07-07"), 0.0, "", 0, "", 0.0)

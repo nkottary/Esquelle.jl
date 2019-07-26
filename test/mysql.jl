@@ -32,6 +32,8 @@ r = MySQL.query(conn, "describe Car")
 
 @insert(Car, c)
 
+@test c.id == 1
+
 r = @select(Car)
 @test r[1] == Car(1, "Octavia", "Skoda", Date("2019-07-07"), 0.0, "", 0, "", 0.0)
 

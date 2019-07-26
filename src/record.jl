@@ -14,8 +14,12 @@ end
 """
 #TODO: Add unique keys
 macro record(e)
+    mut = false
     if !@capture(e, struct T_ fields__ end)
-        error("@know not applied on a struct")
+        mut = true
+        if !@capture(e, mutable struct T_ fields__ end)
+            error("@record not applied on a struct")
+        end
     end
 
     d = Dict()
@@ -126,10 +130,19 @@ macro record(e)
 
     FIELDS_DICT[T] = Record(d, fieldnames, pkey, auto, ukey)
 
-    quote
-        struct $T
-            $(safe_fields...)
-            $(constructors...)
-        end
-    end |> esc
+    if mut
+        quote
+            mutable struct $T
+                $(safe_fields...)
+                $(constructors...)
+            end
+        end |> esc
+    else 
+        quote
+            struct $T
+                $(safe_fields...)
+                $(constructors...)
+            end
+        end |> esc
+    end
 end

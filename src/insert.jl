@@ -48,6 +48,12 @@ julia> @insert Car c
 """
 macro insert(T, arg)
     q = insert_sql(T, arg)
+    f = get_all_fields(T)
+    if f.auto !== nothing
+        lexpr = :(a.$(f.auto) = $(esc(LASTID_FUNC))())
+    else
+        lexpr = :()
+    end
     quote
         a = $(esc(arg))
         if !(a isa $(esc(T)))
@@ -55,5 +61,6 @@ macro insert(T, arg)
         end
 
         $(esc(EXECUTE_FUNC))($(esc(q)))
+        $lexpr
     end
 end

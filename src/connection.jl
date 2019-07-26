@@ -19,14 +19,17 @@ function setconnection(con::T) where T
         qry = :(MySQL.query)
         exe = :(MySQL.execute!)
         auto = "INT NOT NULL AUTO_INCREMENT"
+        lastid = :(MySQL.insertid)
     elseif t == :LibPQ
         qry = :((x, y) -> columntable(LibPQ.execute(x, y)))
         exe = :(LibPQ.execute)
         auto = "SERIAL"
+        lastid = :((c) -> LibPQ.execute(c, "SELECT LASTVAL()"))
     elseif t == :SQLite
         qry = :((x, y) -> columntable(SQLite.Query(x, y)))
         exe = :(SQLite.Query)
         auto = "INTEGER PRIMARY KEY AUTOINCREMENT"
+        lastid = :(SQLite.last_insert_rowid)
     elseif t == :ODBC
         qry = :(ODBC.query)
         exe = :(ODBC.execute)
@@ -41,6 +44,7 @@ function setconnection(con::T) where T
 
     global QUERY_FUNC = :(q -> $qry(Esquelle.CONN, q))
     global EXECUTE_FUNC = :(q -> $exe(Esquelle.CONN, q))
+    global LASTID_FUNC = :(() -> $lastid(Esquelle.CONN))
     global CONN = con
     global AUTO = auto
     nothing

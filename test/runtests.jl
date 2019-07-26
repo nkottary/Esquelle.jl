@@ -2,7 +2,7 @@ using Pkg; Pkg.activate("..")
 using Test, Dates
 using Esquelle
 
-@record struct Car
+@record mutable struct Car
     id::Auto
     name::VarChar{255}
     company::VarChar{50}
@@ -53,4 +53,14 @@ end
 
 @testset "SQLite" begin
     include("sqlite.jl")
+end
+
+@record struct Owner
+    id::Auto
+    carid::Int
+    name::String
+
+    pkey=id
+
+    Owner(carid::Int, name::String) = new(0, carid, name)
 end

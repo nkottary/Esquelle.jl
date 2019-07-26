@@ -20,6 +20,7 @@ CONN = nothing
 QUERY_FUNC = nothing
 EXECUTE_FUNC = nothing
 AUTO = "INT NOT NULL AUTO_INCREMENT"
+LASTID_FUNC = nothing
 
 include("connection.jl")
 include("record.jl")
